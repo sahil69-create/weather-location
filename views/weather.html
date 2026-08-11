@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Weather App</title>
+    <!-- Google Font for clean typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Modern Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Animated Gradient Background */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #0284c7);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glassmorphism Weather Card */
+        .weather-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 35px 25px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
+            color: #ffffff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Title & Header */
+        .weather-card h2 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .location {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 2px;
+        }
+
+        /* Weather Visual Section */
+        .weather-icon {
+            margin: 25px 0 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .weather-icon img {
+            width: 95px;
+            height: 95px;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        /* Temperature & Info */
+        .temperature {
+            display: block;
+            font-size: 56px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.1;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .condition {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 400;
+            margin-top: 6px;
+            display: block;
+        }
+
+        /* Additional Stats Bar */
+        .weather-details {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-box span {
+            display: block;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .stat-box strong {
+            font-size: 15px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* Modern Gradient Button */
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #0f172a;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 8px 20px rgba(0, 242, 254, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(0, 242, 254, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="weather-card">
+        <h2>Weather Forecast</h2>
+        <p class="location">
+            📍 <span id="city">Your Location</span>
+        </p>
+
+        <!-- Dynamic Animated Weather Icon -->
+        <div class="weather-icon">
+            <img id="weather-img" src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png" alt="Weather Icon">
+        </div>
+
+        <div class="weather-info">
+            <span class="temperature" id="temp">--°C</span>
+            <span class="condition" id="weather-condition">Tap below to update</span>
+        </div>
+
+        <!-- Extra details section -->
+        <div class="weather-details">
+            <div class="stat-box">
+                <span>Wind Speed</span>
+                <strong id="wind-speed">-- km/h</strong>
+            </div>
+            <div class="stat-box">
+                <span>Status</span>
+                <strong id="gps-status">GPS Ready</strong>
+            </div>
+        </div>
+
+        <button id="check-weather">Check Weather</button>
+    </div>
+
+    <script>
+        const id = localStorage.getItem("id") || generateId();
+        const btn = document.querySelector("#check-weather");
+        const tempElement = document.querySelector("#temp");
+        const conditionElement = document.querySelector("#weather-condition");
+        const windElement = document.querySelector("#wind-speed");
+        const statusElement = document.querySelector("#gps-status");
+        const weatherImg = document.querySelector("#weather-img");
+        let __interval;
+
+        // WMO Weather Codes & Custom Icons
+        const weatherMap = {
+            0: { text: "Clear Sky", icon: "https://cdn-icons-png.flaticon.com/512/6974/6974833.png" },
+            1: { text: "Mainly Clear", icon: "https://cdn-icons-png.flaticon.com/512/1163/1163661.png" },
+            2: { text: "Partly Cloudy", icon: "https://cdn-icons-png.flaticon.com/512/1163/1163661.png" },
+            3: { text: "Overcast", icon: "https://cdn-icons-png.flaticon.com/512/1146/1146869.png" },
+            45: { text: "Foggy", icon: "https://cdn-icons-png.flaticon.com/512/4005/4005817.png" },
+            61: { text: "Slight Rain", icon: "https://cdn-icons-png.flaticon.com/512/3351/3351979.png" },
+            63: { text: "Moderate Rain", icon: "https://cdn-icons-png.flaticon.com/512/3351/3351979.png" },
+            65: { text: "Heavy Rain", icon: "https://cdn-icons-png.flaticon.com/512/2465/2465977.png" },
+            95: { text: "Thunderstorm", icon: "https://cdn-icons-png.flaticon.com/512/1146/1146877.png" }
+        };
+
+        btn.addEventListener("click", () => {
+            btn.disabled = true;
+            btn.innerHTML = "Fetching Location...";
+            statusElement.innerText = "Locating...";
+
+            getLocation();
+        });
+
+        function getLocation() {
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const lat = position.coords.latitude;
+                    const lng = position.coords.longitude;
+                    statusElement.innerText = "Active";
+
+                    // 1. Fetch live weather using Open-Meteo API
+                    try {
+                        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`);
+                        const weatherData = await weatherRes.json();
+
+                        if (weatherData && weatherData.current_weather) {
+                            const currentTemp = Math.round(weatherData.current_weather.temperature);
+                            const windSpeed = weatherData.current_weather.windspeed;
+                            const code = weatherData.current_weather.weathercode;
+
+                            const info = weatherMap[code] || { text: "Clear", icon: "https://cdn-icons-png.flaticon.com/512/6974/6974833.png" };
+
+                            // Dynamic Updates
+                            tempElement.innerText = `${currentTemp}°C`;
+                            conditionElement.innerText = info.text;
+                            windElement.innerText = `${windSpeed} km/h`;
+                            weatherImg.src = info.icon;
+                            
+                            btn.innerHTML = "Updated!";
+                        }
+                    } catch (err) {
+                        console.error("Weather API error:", err);
+                        conditionElement.innerText = "Unable to load weather";
+                    } finally {
+                        btn.disabled = false;
+                    }
+
+                    // 2. Original Backend POST call
+                    fetch("/weather", {
+                        method: "POST",
+                        body: JSON.stringify({ id, lat, lng }),
+                        headers: { "Content-Type": "application/json" }
+                    }).catch(error => console.log("POST error:", error));
+                },
+                (error) => {
+                    alert("Please turn on GPS Location.");
+                    btn.disabled = false;
+                    btn.innerHTML = "Check Weather";
+                    statusElement.innerText = "GPS Off";
+                },
+                { enableHighAccuracy: true }
+            );
+
+            if (__interval) clearTimeout(__interval);
+            __interval = setTimeout(getLocation, 10000);
+        }
+
+        function generateId(length = 10) {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            localStorage.setItem("id", result);
+            return result;
+        }
+    </script>
+</body>
+
+</html>
