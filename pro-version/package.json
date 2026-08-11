@@ -1,0 +1,19 @@
+{
+  "name": "skyadmin-live-tracker",
+  "version": "2.0.0",
+  "description": "SkyAdmin - Professional Live Location Tracking (Frontend + Backend in one)",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.1",
+    "socket.io": "^4.8.1"
+  }
+}
