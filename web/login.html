@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | SkyAdmin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230ea5e9'%3E%3Cpath d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E" type="image/svg+xml">
+    <style>
+        * { font-family: 'Inter', -apple-system, sans-serif; }
+        body {
+            background:
+                radial-gradient(circle at 20% 10%, rgba(56, 189, 248, 0.25), transparent 40%),
+                radial-gradient(circle at 80% 90%, rgba(34, 211, 238, 0.2), transparent 40%),
+                linear-gradient(180deg, #e0f2fe 0%, #f0f9ff 40%, #f8fafc 100%);
+            min-height: 100vh;
+        }
+        .brand-logo {
+            background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.4);
+        }
+        .signin-card {
+            box-shadow: 0 20px 60px -20px rgba(14, 165, 233, 0.25);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-4 sm:p-6">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-6 sm:mb-8">
+            <div class="brand-logo w-16 h-16 sm:w-20 sm:h-20 rounded-3xl mx-auto flex items-center justify-center mb-4">
+                <i class="fa-solid fa-location-dot text-white text-2xl sm:text-3xl"></i>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-1.5">
+                Sky<span class="text-sky-500">Admin</span>
+            </h1>
+            <p class="text-slate-500 text-sm sm:text-base">Live Location Intelligence Platform</p>
+        </div>
+
+        <div class="light-card signin-card p-6 sm:p-9 fade-in-up">
+            <div class="mb-6 sm:mb-7">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mb-1">Welcome back</h2>
+                <p class="text-sm text-slate-500">Sign in to access the tracking dashboard</p>
+            </div>
+
+            <form action="/login" method="POST" class="space-y-4 sm:space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                        Username
+                    </label>
+                    <div class="relative">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <input
+                            type="text"
+                            name="username"
+                            required
+                            autocomplete="off"
+                            placeholder="Enter your username"
+                            class="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 shadow-sm smooth focus:border-sky-400"
+                        >
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+                        Password
+                    </label>
+                    <div class="relative">
+                        <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                            <i class="fa-solid fa-lock"></i>
+                        </div>
+                        <input
+                            type="password"
+                            name="password"
+                            required
+                            id="pwdInput"
+                            placeholder="Enter your password"
+                            class="w-full pl-11 pr-12 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 shadow-sm smooth focus:border-sky-400"
+                        >
+                        <button
+                            type="button"
+                            onclick="togglePwd()"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-sky-500 smooth"
+                        >
+                            <i class="fa-solid fa-eye" id="pwdIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-sm pt-1">
+                    <label class="flex items-center gap-2 text-slate-600 cursor-pointer select-none">
+                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300 bg-white text-sky-500 focus:ring-sky-400/30">
+                        Remember me
+                    </label>
+                    <a href="#" class="text-sky-600 hover:text-sky-700 font-medium smooth">Need help?</a>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full py-4 rounded-2xl text-white font-semibold flex items-center justify-center gap-2.5 hover:shadow-xl hover:shadow-sky-500/25 hover:-translate-y-0.5 smooth active:scale-[0.98]"
+                    style="background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);"
+                >
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    <span>Sign In to Dashboard</span>
+                </button>
+            </form>
+
+            <div class="mt-7 pt-6 border-t border-slate-200/70">
+                <div class="flex items-center justify-center gap-2.5 text-slate-500 text-xs sm:text-sm">
+                    <div class="relative">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 block pulse-dot"></span>
+                    </div>
+                    <span class="font-medium">All systems operational</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center text-slate-400 text-xs mt-6 sm:mt-8">
+            &copy; 2026 SkyAdmin &middot; Secured with end-to-end encryption
+        </p>
+    </div>
+
+    <script>
+        function togglePwd() {
+            const input = document.getElementById('pwdInput');
+            const icon = document.getElementById('pwdIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

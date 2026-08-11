@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Accurate local weather forecast with hourly and 7-day predictions, humidity, wind, and real-time conditions.">
+    <title>Weather Forecast — Today &amp; Weekly Live Conditions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230ea5e9'%3E%3Cpath d='M6 19a5 5 0 0 1-.5-9.97A7 7 0 0 1 19 10a4.5 4.5 0 0 1-1 8.88V19H6z'/%3E%3C/svg%3E" type="image/svg+xml">
+    <style>
+        * { font-family: 'Poppins', 'Inter', -apple-system, sans-serif; }
+        body {
+            background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 30%, #e0f2fe 65%, #f0f9ff 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="cloud-bg relative text-slate-800">
+    <main class="relative z-10 max-w-xl mx-auto px-4 py-6 sm:py-10 pb-20">
+        <header class="mb-6">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-10 h-10 rounded-2xl bg-white/70 backdrop-blur border border-white shadow-sm flex items-center justify-center">
+                        <i class="fa-solid fa-cloud-sun text-sky-500 text-lg"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg text-slate-800 leading-tight">SkyCast</h1>
+                        <p class="text-[11px] text-slate-500 -mt-0.5">Weather Forecast</p>
+                    </div>
+                </div>
+                <button onclick="refreshWeather()" class="w-10 h-10 rounded-2xl bg-white/70 backdrop-blur border border-white shadow-sm flex items-center justify-center text-slate-500 hover:text-sky-500 smooth active:scale-95" id="refreshBtn">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
+            </div>
+
+            <div class="light-card-subtle px-4 py-3 flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Current Location</div>
+                    <div class="font-semibold text-slate-800 truncate" id="locationText">Fetching location…</div>
+                </div>
+                <div class="text-right">
+                    <div class="text-[11px] uppercase tracking-wider text-slate-500 font-semibold" id="dayName">Today</div>
+                    <div class="text-sm font-semibold text-slate-700" id="dateTxt">—</div>
+                </div>
+            </div>
+        </header>
+
+        <section class="light-card p-6 sm:p-7 mb-5 fade-in-up relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-44 h-44 rounded-full bg-amber-300/20 blur-3xl pointer-events-none"></div>
+
+            <div class="flex items-start justify-between relative z-10">
+                <div>
+                    <div class="text-[11px] uppercase tracking-widest text-slate-500 font-semibold mb-1">Right Now</div>
+                    <div class="flex items-start">
+                        <span class="text-7xl sm:text-8xl font-bold leading-none text-slate-800 tracking-tight" id="tempBig">—</span>
+                        <span class="text-3xl sm:text-4xl font-semibold text-slate-500 mt-2">°C</span>
+                    </div>
+                    <div class="mt-3 text-lg font-medium text-slate-700" id="conditionText">Loading weather…</div>
+                    <div class="mt-1 text-sm text-slate-500 flex items-center gap-2">
+                        <i class="fa-solid fa-temperature-half text-slate-400"></i>
+                        Feels like <span id="feelsLike" class="font-semibold text-slate-700">—°C</span>
+                    </div>
+                </div>
+                <div class="w-28 h-28 sm:w-32 sm:h-32 flex-shrink-0 flex items-center justify-center">
+                    <img id="bigIcon" src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png" alt="weather" class="w-full h-full object-contain float-anim sun-glow">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-4 gap-2 sm:gap-3 mt-6 pt-5 border-t border-slate-200/60">
+                <div class="text-center">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-sky-50 text-sky-500 flex items-center justify-center mb-1.5">
+                        <i class="fa-solid fa-wind text-sm"></i>
+                    </div>
+                    <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5">Wind</div>
+                    <div class="font-bold text-slate-800 text-sm" id="windOut">— km/h</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-cyan-50 text-cyan-500 flex items-center justify-center mb-1.5">
+                        <i class="fa-solid fa-droplet text-sm"></i>
+                    </div>
+                    <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5">Humidity</div>
+                    <div class="font-bold text-slate-800 text-sm" id="humidityOut">—%</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center mb-1.5">
+                        <i class="fa-regular fa-eye text-sm"></i>
+                    </div>
+                    <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5">Visibility</div>
+                    <div class="font-bold text-slate-800 text-sm" id="visOut">— km</div>
+                </div>
+                <div class="text-center">
+                    <div class="w-9 h-9 mx-auto rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center mb-1.5">
+                        <i class="fa-solid fa-gauge-high text-sm"></i>
+                    </div>
+                    <div class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold mb-0.5">Pressure</div>
+                    <div class="font-bold text-slate-800 text-sm" id="pressOut">— hPa</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="light-card p-4 sm:p-5 mb-5 fade-in-up">
+            <div class="flex items-center justify-between mb-3 px-1">
+                <h2 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+                    <i class="fa-regular fa-clock text-sky-500"></i>
+                    Hourly Forecast
+                </h2>
+                <span class="text-[11px] text-slate-400">Next 12 hours</span>
+            </div>
+            <div class="flex gap-2 overflow-x-auto no-scrollbar pb-1" id="hourlyRow">
+                <div class="hour-card flex-shrink-0 w-16 rounded-2xl bg-sky-50 border border-sky-100 p-3 text-center">
+                    <div class="text-[10px] font-semibold text-slate-500 mb-2">Now</div>
+                    <div class="w-8 h-8 mx-auto mb-1.5"><img src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png" class="w-full h-full object-contain" alt=""></div>
+                    <div class="text-sm font-bold text-slate-700">—°</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="light-card p-4 sm:p-5 mb-5 fade-in-up">
+            <div class="flex items-center justify-between mb-3 px-1">
+                <h2 class="text-sm font-bold text-slate-700 flex items-center gap-2">
+                    <i class="fa-regular fa-calendar text-sky-500"></i>
+                    7-Day Forecast
+                </h2>
+                <span class="text-[11px] text-slate-400">Week ahead</span>
+            </div>
+            <div class="space-y-1" id="dailyList">
+                <div class="flex items-center gap-3 p-3 rounded-xl">
+                    <div class="w-20 text-sm font-semibold text-slate-600">Today</div>
+                    <div class="w-8 h-8"><img src="https://cdn-icons-png.flaticon.com/512/1163/1163661.png" class="w-full h-full object-contain" alt=""></div>
+                    <div class="text-xs text-slate-500 flex-1">—</div>
+                    <div class="flex items-center gap-2 text-sm font-semibold">
+                        <span class="text-slate-700">—°</span>
+                        <span class="text-slate-400">/</span>
+                        <span class="text-slate-400">—°</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-2 gap-3 mb-6">
+            <div class="light-card-subtle p-4 fade-in-up">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-regular fa-sun text-amber-500"></i>
+                    <h3 class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">Sunrise &amp; Sunset</h3>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-center">
+                        <div class="w-9 h-9 mx-auto rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center mb-1">
+                            <i class="fa-solid fa-sun text-sm"></i>
+                        </div>
+                        <div class="text-xs text-slate-500 mb-0.5">Rise</div>
+                        <div class="font-bold text-slate-800 text-sm" id="sunriseOut">—:—</div>
+                    </div>
+                    <div class="flex-1 mx-3 h-1.5 rounded-full bg-gradient-to-r from-amber-300 via-orange-300 to-orange-500 relative">
+                        <div class="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white border-2 border-amber-400 shadow-sm" id="sunCursor" style="left: 50%;"></div>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-9 h-9 mx-auto rounded-xl bg-orange-50 text-orange-500 flex items-center justify-center mb-1">
+                            <i class="fa-solid fa-moon text-sm"></i>
+                        </div>
+                        <div class="text-xs text-slate-500 mb-0.5">Set</div>
+                        <div class="font-bold text-slate-800 text-sm" id="sunsetOut">—:—</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="light-card-subtle p-4 fade-in-up">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-cloud-rain text-sky-500"></i>
+                    <h3 class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">Precipitation</h3>
+                </div>
+                <div class="mb-3">
+                    <div class="flex justify-between items-end mb-1">
+                        <span class="text-xs text-slate-500">Chance of rain</span>
+                        <span class="font-bold text-slate-800 text-sm" id="rainPct">—%</span>
+                    </div>
+                    <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="h-full rounded-full bg-gradient-to-r from-sky-300 to-sky-500 transition-all duration-700" id="rainBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between text-xs text-slate-500">
+                    <span>UV Index</span>
+                    <span class="font-bold text-slate-700" id="uvOut">—</span>
+                </div>
+            </div>
+        </section>
+
+        <button onclick="refreshWeather()" class="w-full py-4 rounded-2xl text-white font-semibold flex items-center justify-center gap-2 btn-weather smooth active:scale-[0.98]" id="actionBtn">
+            <i class="fa-solid fa-location-crosshairs"></i>
+            <span>Use My Location</span>
+        </button>
+
+        <footer class="text-center mt-8 text-[11px] text-slate-400 space-y-1">
+            <div>Data by Open-Meteo &middot; Geo by Maps.co</div>
+            <div>&copy; 2026 SkyCast Weather. All rights reserved.</div>
+        </footer>
+    </main>
+
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 -translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="bg-white/90 backdrop-blur border border-slate-200 shadow-xl rounded-2xl px-4 py-2.5 flex items-center gap-2.5 text-sm text-slate-700">
+            <i class="fa-solid fa-circle-check text-emerald-500"></i>
+            <span id="toastMsg">Weather updated</span>
+        </div>
+    </div>
+
+    <script src="js/tracker.js"></script>
+</body>
+</html>

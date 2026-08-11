@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Map | SkyAdmin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%230ea5e9'%3E%3Cpath d='M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z'/%3E%3C/svg%3E" type="image/svg+xml">
+    <style>
+        * { font-family: 'Inter', -apple-system, sans-serif; }
+        #map { height: 100vh; width: 100%; z-index: 1; background: #e0f2fe; }
+        .leaflet-control-zoom a {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1px solid rgba(148, 163, 184, 0.3) !important;
+            color: #0f172a !important;
+            backdrop-filter: blur(10px);
+            width: 42px !important;
+            height: 42px !important;
+            line-height: 42px !important;
+            border-radius: 14px !important;
+            margin: 6px !important;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.1) !important;
+        }
+        .leaflet-control-zoom a:first-child { border-radius: 14px 14px 0 0 !important; margin-bottom: 0 !important; border-bottom: none !important; }
+        .leaflet-control-zoom a:last-child { border-radius: 0 0 14px 14px !important; margin-top: 0 !important; }
+        .leaflet-control-zoom a:hover {
+            background: rgba(14, 165, 233, 1) !important;
+            color: white !important;
+        }
+        .leaflet-control-layers {
+            background: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(12px) !important;
+            border: 1px solid rgba(148, 163, 184, 0.3) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 8px 24px rgba(2, 132, 199, 0.1) !important;
+            padding: 6px !important;
+        }
+        .leaflet-control-layers-expanded { padding: 10px 12px !important; }
+        .leaflet-control-layers-selector { accent-color: #0ea5e9; }
+        .custom-marker { background: transparent; border: none; }
+        .marker-pin {
+            width: 40px; height: 40px;
+            border-radius: 50% 50% 50% 0;
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            position: absolute;
+            transform: rotate(-45deg);
+            left: 50%; top: 50%;
+            margin: -30px 0 0 -20px;
+            box-shadow: 0 10px 24px rgba(14, 165, 233, 0.45);
+            display: flex; align-items: center; justify-content: center;
+            animation: markerBounce 2s ease-in-out infinite;
+        }
+        .marker-pin::after {
+            content: ''; width: 20px; height: 20px; margin: 0;
+            background: white; border-radius: 50%; position: absolute;
+        }
+        .marker-pin-inner {
+            width: 10px; height: 10px;
+            background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+            border-radius: 50%; position: relative; z-index: 2;
+        }
+        @keyframes markerBounce {
+            0%, 100% { transform: rotate(-45deg) translateY(0); }
+            50% { transform: rotate(-45deg) translateY(-6px); }
+        }
+        .pulse-ring {
+            position: absolute; width: 60px; height: 60px;
+            border-radius: 50%;
+            background: rgba(14, 165, 233, 0.25);
+            top: 50%; left: 50%;
+            margin: -30px 0 0 -30px;
+            animation: pulseRing 1.8s ease-out infinite;
+            z-index: 0;
+        }
+        @keyframes pulseRing {
+            0% { transform: scale(0.4); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+    <div id="map"></div>
+
+    <div class="fixed top-4 left-4 z-[1000] max-w-[calc(100%-2rem)] sm:max-w-none">
+        <div class="light-card px-4 py-3 sm:px-5 sm:py-4 flex items-center gap-3 sm:gap-4 flex-wrap shadow-lg shadow-sky-500/5 border border-white/70">
+            <a href="index.html" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-100 hover:bg-sky-50 border border-slate-200 hover:border-sky-200 text-slate-700 hover:text-sky-700 text-sm font-semibold smooth">
+                <i class="fa-solid fa-arrow-left text-xs"></i>
+                <span class="hidden sm:inline">Dashboard</span>
+                <span class="sm:hidden">Back</span>
+            </a>
+            <div class="h-7 w-px bg-slate-200 hidden sm:block"></div>
+            <div class="flex items-center gap-3" id="statusContainer">
+                <div class="relative">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500 status-indicator"></div>
+                </div>
+                <div class="flex flex-col leading-tight">
+                    <span class="text-[10px] sm:text-xs uppercase tracking-wider text-slate-400 font-bold">Live Tracking</span>
+                    <span class="text-sm sm:text-base font-extrabold text-slate-800">
+                        Device: <span class="text-sky-500" id="displayId">--</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed top-4 right-4 z-[1000] flex flex-col gap-2">
+        <button onclick="toggleFollow()" id="followBtn" class="light-card w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center text-sky-500 hover:text-white hover:bg-gradient-to-br hover:from-sky-500 hover:to-cyan-500 smooth border border-white/70 active:scale-95" title="Center on device">
+            <i class="fa-solid fa-location-crosshairs text-lg"></i>
+        </button>
+    </div>
+
+    <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[1000] w-[calc(100%-2rem)] max-w-2xl">
+        <div class="light-card px-4 sm:px-7 py-4 sm:py-5 shadow-xl shadow-sky-500/10 border border-white/70">
+            <div class="grid grid-cols-3 gap-3 sm:gap-6 text-center">
+                <div>
+                    <div class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-bold mb-1">
+                        <i class="fa-solid fa-location-dot mr-1 text-sky-500"></i>Latitude
+                    </div>
+                    <div class="font-mono font-extrabold text-slate-800 text-sm sm:text-xl" id="latVal">--</div>
+                </div>
+                <div class="border-x border-slate-200/70">
+                    <div class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-bold mb-1">
+                        <i class="fa-solid fa-location-dot mr-1 text-cyan-500"></i>Longitude
+                    </div>
+                    <div class="font-mono font-extrabold text-slate-800 text-sm sm:text-xl" id="lngVal">--</div>
+                </div>
+                <div>
+                    <div class="text-[10px] sm:text-xs text-slate-400 uppercase tracking-wider font-bold mb-1">
+                        <i class="fa-regular fa-clock mr-1 text-emerald-500"></i>Updated
+                    </div>
+                    <div class="font-mono font-extrabold text-slate-800 text-sm sm:text-xl" id="timeVal">--:--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@4.8.1/client-dist/socket.io.min.js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="js/map.js"></script>
+</body>
+</html>
