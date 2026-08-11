@@ -1,0 +1,17 @@
+{
+  "name": "live-location-tracker",
+  "version": "1.0.0",
+  "description": "Live location tracking application using Express and Socket.IO",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon index.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.1",
+    "socket.io": "^4.8.1",
+    "tarkine": "^0.0.2"
+  }
+}
