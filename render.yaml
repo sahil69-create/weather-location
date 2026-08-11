@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: skyadmin-live-tracker
+    runtime: node
+    rootDir: pro-version
+    buildCommand: npm install
+    startCommand: node server.js
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: AUTH_USERNAME
+        generateValue: false
+        sync: false
+      - key: AUTH_PASSWORD
+        generateValue: false
+        sync: false
+      - key: AUTH_TOKEN
+        generateValue: true
